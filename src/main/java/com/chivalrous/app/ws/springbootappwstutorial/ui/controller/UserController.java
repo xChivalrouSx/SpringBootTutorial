@@ -1,5 +1,9 @@
 package com.chivalrous.app.ws.springbootappwstutorial.ui.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,8 @@ import com.chivalrous.app.ws.springbootappwstutorial.ui.model.UserDetails;
 @RequestMapping("users") // http://localhost:8080/users
 public class UserController {
 
+	Map<String, User> users;
+
 	@GetMapping
 	public String getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "limit", defaultValue = "10") int limit,
@@ -31,22 +37,28 @@ public class UserController {
 
 	@GetMapping(path = "/{userId}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<User> getUser(@PathVariable String userId) {
-		User returnValue = new User();
-		returnValue.setFirstName("Mert");
-		returnValue.setLastName("Çakar");
-		returnValue.setEmail("mail@gmail.com");
-		returnValue.setUserId(userId);
-
-		return new ResponseEntity<User>(returnValue, HttpStatus.OK);
+		if (users.containsKey(userId)) {
+			return new ResponseEntity<>(users.get(userId), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 	}
 
 	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<User> createUser(@Valid @RequestBody UserDetails userDetails) {
 		User returnValue = new User();
+
+		String userId = UUID.randomUUID().toString();
+		returnValue.setUserId(userId);
 		returnValue.setFirstName(userDetails.getFirstName());
 		returnValue.setLastName(userDetails.getLastName());
 		returnValue.setEmail(userDetails.getEmail());
+
+		if (users == null) {
+			users = new HashMap<>();
+		}
+		users.put(userId, returnValue);
 
 		return new ResponseEntity<User>(returnValue, HttpStatus.OK);
 	}
