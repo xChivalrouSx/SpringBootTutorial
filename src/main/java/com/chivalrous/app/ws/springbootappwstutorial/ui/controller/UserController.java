@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chivalrous.app.ws.springbootappwstutorial.ui.model.UpdateUserDetails;
 import com.chivalrous.app.ws.springbootappwstutorial.ui.model.User;
 import com.chivalrous.app.ws.springbootappwstutorial.ui.model.UserDetails;
 
@@ -63,9 +64,15 @@ public class UserController {
 		return new ResponseEntity<User>(returnValue, HttpStatus.OK);
 	}
 
-	@PutMapping
-	public String updateUser() {
-		return "update user was called";
+	@PutMapping(path = "/{userId}", consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public User updateUser(@PathVariable String userId, @Valid @RequestBody UpdateUserDetails userDetails) {
+		User storedUser = users.get(userId);
+		storedUser.setFirstName(userDetails.getFirstName());
+		storedUser.setLastName(userDetails.getLastName());
+
+		users.put(userId, storedUser);
+		return storedUser;
 	}
 
 	@DeleteMapping
