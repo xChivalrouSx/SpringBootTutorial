@@ -61,7 +61,7 @@ public class UserController {
 		}
 		users.put(userId, returnValue);
 
-		return new ResponseEntity<User>(returnValue, HttpStatus.OK);
+		return new ResponseEntity<>(returnValue, HttpStatus.OK);
 	}
 
 	@PutMapping(path = "/{userId}", consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
@@ -75,8 +75,9 @@ public class UserController {
 		return storedUser;
 	}
 
-	@DeleteMapping
-	public String deleteUser() {
-		return "delete user was called";
+	@DeleteMapping(path = "/{userId}")
+	public ResponseEntity<User> deleteUser(@PathVariable String userId) {
+		users.remove(userId);
+		return ResponseEntity.noContent().build();
 	}
 }
