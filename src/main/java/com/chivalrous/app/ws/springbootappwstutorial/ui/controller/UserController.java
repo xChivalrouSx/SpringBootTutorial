@@ -40,7 +40,6 @@ public class UserController {
 		return new ResponseEntity<User>(returnValue, HttpStatus.OK);
 	}
 
-	// test for github
 	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<User> createUser(@Valid @RequestBody UserDetails userDetails) {
