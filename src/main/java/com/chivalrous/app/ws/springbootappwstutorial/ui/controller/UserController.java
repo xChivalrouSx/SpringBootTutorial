@@ -1,11 +1,10 @@
 package com.chivalrous.app.ws.springbootappwstutorial.ui.controller;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chivalrous.app.ws.springbootappwstutorial.ui.model.UpdateUserDetails;
 import com.chivalrous.app.ws.springbootappwstutorial.ui.model.User;
 import com.chivalrous.app.ws.springbootappwstutorial.ui.model.UserDetails;
+import com.chivalrous.app.ws.springbootappwstutorial.ui.service.UserService;
 
 @RestController
 @RequestMapping("users") // http://localhost:8080/users
 public class UserController {
+
+	@Autowired
+	UserService userService;
 
 	Map<String, User> users;
 
@@ -47,20 +50,9 @@ public class UserController {
 
 	@PostMapping(consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<User> createUser(@Valid @RequestBody UserDetails userDetails) {
-		User returnValue = new User();
+	public ResponseEntity<User> createUser(@Valid @RequestBody UserDetails userDetails) throws Exception {
 
-		String userId = UUID.randomUUID().toString();
-		returnValue.setUserId(userId);
-		returnValue.setFirstName(userDetails.getFirstName());
-		returnValue.setLastName(userDetails.getLastName());
-		returnValue.setEmail(userDetails.getEmail());
-
-		if (users == null) {
-			users = new HashMap<>();
-		}
-		users.put(userId, returnValue);
-
+		User returnValue = userService.createUser(userDetails);
 		return new ResponseEntity<>(returnValue, HttpStatus.OK);
 	}
 
